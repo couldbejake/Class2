@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src='https://code.jquery.com/jquery-3.4.1.min.js'></script>
+    <script src='https://code.jquery.com/ui/1.12.1/jquery-ui.min.js'></script>
+    <link href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css' rel='stylesheet'>
+    <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/js/all.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300&display=swap" rel="stylesheet">
+    <script src="./jgradient.js" charset="utf-8"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <style media="screen">
+
+        html  {
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+        }
+
+        body {
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          background: #159957;  /* fallback for old browsers */
+          background: -webkit-linear-gradient(to right, #155799, #159957);  /* Chrome 10-25, Safari 5.1-6 */
+          background: linear-gradient(to right, #155799, #159957); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        }
+
+        #app-main {
+          width: 100%;
+          height: 100%;
+        }
+
+        .app-topbar {
+          /*background-color: red;*/
+          width: 100%;
+          height: 80px;
+        }
+
+        .app-swipe {
+          width: 100%;
+          /*background-color: green;*/
+        }
+
+        .app-controls {
+          /*background-color: dodgerblue;*/
+          width: 100%;
+          height: 200px;
+          max-width: 400px;
+          height: 100%;
+          width: 80%;
+          margin: 0 auto;
+        }
+
+        .twitter-quote {
+          font-size: 18px;
+          font-weight: 100;
+          font-family: 'Roboto', sans-serif;
+        }
+
+        .noselect {
+            -webkit-touch-callout: none; /* iOS Safari */
+              -webkit-user-select: none; /* Safari */
+               -khtml-user-select: none; /* Konqueror HTML */
+                 -moz-user-select: none; /* Old versions of Firefox */
+                  -ms-user-select: none; /* Internet Explorer/Edge */
+                      user-select: none; /* Non-prefixed version, currently
+                                            supported by Chrome, Edge, Opera and Firefox */
+          }
+
+        .twitter-logo {
+          width: 60px;
+          height: 60px;
+          position: absolute;
+          bottom: 10px;
+          right: 10px;
+          top: 10px;
+          filter: invert(1);
+        }
+
+    </style>
+    <style media="screen">
+
+        #circles-container {
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          overflow-x: hidden;
+          overflow-y: hidden;
+          pointer-events: none
+        }
+
+        .circle {
+          background-color: rgba(255, 255, 255, 0.2);
+          backdrop-filter: blur(5px);
+          position: absolute;
+          z-index: 999;
+          border-radius: 50%;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        #main-container {
+          height: 100%;
+          padding-left: 0px;
+          padding-right: 0px;
+        }
+
+        #overlay-grain {
+          width: 100%;
+          height: 100%;
+          position: fixed;
+          z-index: 9999;
+          pointer-events: none;
+          background-image: url(data:image/png;base64,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);
+          background-size: 40px 40px;
+        }
+
+        .app-row {
+          display: flex;
+          border: 1px solid red;
+          height: calc(100% - 50px);
+          padding-top: 25px;
+          padding-bottom: 25px;
+        }
+
+        .app-row-top {
+          min-height: 50px;
+
+        }
+        .app-row-btn {
+          border-radius: 50%;
+        }
+        .app-row-btn {
+          width: 25px;
+          height: 25px;
+          background-color: white;
+          margin-left: 10px;
+        }
+        .app-row-btns {
+          margin-left: 20px;
+          display: flex;
+        }
+    </style>
+
+  <body class='noselect'>
+    <div id='overlay-grain'>
+
+    </div>
+    <style media="screen">
+      .app-row-top {
+        height: 50px;
+      }
+      .app-row-top {
+        border: 1px solid white;
+      }
+      .app-row-icon {
+
+      }
+    </style>
+    <div id='main-container'>
+
+        <div class="app-row-top">
+          <div class="app-row-icon">
+
+          </div>
+        </div>
+        <div class='app-row'>
+            <div style='width:200px; position: relative;'>
+              <div  style='width:100%;height:100%;' id='opt-dislike-container'>
+                <div class="control-option option-dislike" style="margin-left: auto;position: relative;" id='opt-dislike'>
+                  <i class="fas fa-minus"></i>
+                </div>
+              </div>
+
+            </div>
+            <div style='width: calc(100% - 400px);'>
+              <style media="screen">
+
+                .swipe-card-placeholder {
+                  width: 100%;
+                  height: 100%;
+                  border-radius: 5px;
+                }
+
+                .swipe-card-layout {
+                  width: 80%;
+                  max-width: 350px;
+                  height: 90%;
+                  margin-top: 5%;
+                  margin-left: auto;
+                  margin-right: auto;
+                  position: relative;
+                  border-radius: 5px;
+                  cursor: crosshair;
+                }
+
+                .swipe-card {
+                  position: absolute;
+                  display: flex;
+                  flex-direction: column;
+                  width: 100%;
+                  height: 100%;
+                  z-index: 999;
+                  border-radius: 5px;
+                  cursor: crosshair;
+                  height: calc(100% + 1px);
+                }
+                .swipe-card-header {
+                  height: 40%;
+                  background-image: linear-gradient(to bottom, #4cb5f0, #0ca5fd);
+                  padding-left: 20px;
+                  padding-right: 20px;
+                  position: relative;
+                  border-top-left-radius: 5px;
+                  border-top-right-radius: 5px;
+                  border-left: 3px solid white;
+                  border-right: 3px solid white;
+                }
+                .swipe-card-body {
+                  position: relative;
+                  height: 30%;
+                  background-color: rgba(255, 255, 255, 0.1);
+                  backdrop-filter: blur(15px);
+                  margin-top: 5px;
+                  margin-bottom: 5px;
+                  padding-left: 20px;
+                  padding-right: 20px;
+                  border-left: 3px solid white;
+                  border-right: 3px solid white;
+              }
+                .swipe-card-description {
+                  height: 30%;
+                  background-image: linear-gradient(to bottom right, #07a4ff, #0ea4e5);
+                  padding: 20px;
+                  margin-bottom: 5px;
+                  border-left: 3px solid white;
+                  border-right: 3px solid white;
+                }
+                .swipe-card-footer {
+                  height: 40%;
+                  backdrop-filter: blur(15px);
+                  padding: 20px;
+                  border-left: 3px solid white;
+                  border-right: 3px solid white;
+                  border-bottom-left-radius: 5px;
+                  border-bottom-right-radius: 5px;
+                  background-color: rgba(255, 255, 255, 0.1);
+                  border-radius: 5px;
+                  border-top-left-radius: 0px;
+                  border-top-right-radius: 0px;
+                }
+                .swipe-card-center {
+                  position: absolute;
+                  transform: translate(0px, -50%);
+                  top: 50%;
+                }
+                .swipe-card-header-title, .swipe-card-header-desc {
+                  font-family: 'Roboto', sans-serif;
+                  font-weight: 100;
+                  color: white;
+                }
+                .swipe-card-header-title {
+                  font-size: 30px;
+                  font-weight: 100;
+                }
+                .swipe-card-header-desc {
+                  font-size: 20px;
+                  font-weight: 100;
+                }
+                .swipe-card-metic {
+                  font-family: 'Roboto', sans-serif;
+                  color: white;
+                }
+                .legend {
+                  font-family: 'Roboto', sans-serif;
+                  color: white;
+                  margin-bottom: 0px;
+                }
+                .swipe-card-metic {
+                  font-size: 36px;
+                  font-weight: 100;
+                }
+                .swipe-card-metric-description {
+                  font-size: 19px;
+                  font-weight: 100;
+                }
+                .twitter-quote {
+                  color: white;
+                }
+
+                .swipe-card-bg-counter {
+                  height: 100%;
+                  width: 100%;
+                  border-radius: 5px;
+                  display: flex;
+                  flex-direction: column;
+                  position: absolute;
+                }
+                .swipe-card-bg {
+                  position: absolute;
+                      background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(197, 197, 197, 0.15) 20px, rgba(197, 197, 197, 0.15) 40px);
+                  width: 100%;
+                  height: 100%;
+                  border-radius: 4px;
+                }
+                .swipe-card-bg-content {
+                  height: 100%;
+                  width: 100%;
+
+                }
+                .swipe-card-inner {
+                  border: 1px solid rgba(255, 255, 255, 0.2);
+                  height: 100%;
+                  width: 100%;
+                  border-radius: 4px;
+                }
+                #opt-dislike-container, #opt-like-container {
+                  border-radius: 4px;
+                  background-color: rgba(255, 255, 255, 0.1);
+                  width: 100%;
+                  height: 100%;
+                  background-size: auto;
+                  /* background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255, 255, 255, 0.3) 20px, rgba(255, 255, 255, 0.3) 40px); */
+                  border: 1px solid rgba(255, 255, 255, 0.2);
+
+                }
+                #opt-dislike-container {
+                      cursor: grabbing;
+                      border-top-left-radius: 0px;
+                      border-bottom-left-radius: 0px;
+                }
+                #opt-like-container {
+                      cursor: grabbing;
+                      border-top-right-radius: 0px;
+                      border-bottom-right-radius: 0px;
+                }
+
+                .option-active {
+
+                }
+                .anim-message-content {
+                  width: 100%;
+                  height: 100%;
+                  border-radius: 8px;
+                  border-top-left-radius: 0px;
+                }
+                .anim-message-content-right {
+                  border-radius: 8px;
+                      border-top-left-radius: 8px;
+                      border-top-right-radius: 0px;
+                      background-color: rgba(255, 255, 255, 1);
+                      color: black;
+                }
+                .anim-message-layer {
+                  height: 100%;
+                  width: 100%;
+                  border: 1px solid white;
+                  border-radius: 5px;
+                  border-top-right-radius: 5px;
+                }
+
+
+                .anim-message-inner {
+                  background-color: white;
+                      width: 100%;
+                      height: 100%;
+                      border-top-left-radius: 0px;
+                      font-family: 'whatsapp-font-light';
+                      padding: 10px;
+                      font-size: 16px;
+                      background: linear-gradient(-20deg, white 10% , rgb(240, 240, 240) 20%, white);
+                      border-radius: 5px;
+                      border-top-left-radius: 0px;
+                      display: flex;
+                }
+                .anim-message-inner-right {
+                  border-top-left-radius: 5px;
+                  border-top-right-radius: 0px;
+                  color: white;
+                  -webkit-box-shadow: 0 10px 6px -6px #0000003d;
+                  -moz-box-shadow: 0 10px 6px #00000029;
+                  box-shadow: 0 10px 6px -6px #00000029;
+                }
+                .anim-message-inner-right span {
+                  margin-left: auto;
+                  margin-right: auto;
+                }
+                .tweet-text {
+                  font-family: 'Roboto', sans-serif;
+                  padding-bottom: 0px;
+                  margin-bottom: 0px;
+                  text-align: left;
+                }
+                .anim-message-twitter-logo {
+                  font-size: 20px;
+                  color: dodgerblue;
+                      word-wrap: break-word !important;
+                      vertical-align: middle;
+                      height: 100%;
+                }
+
+                .anim-message-inner-twitter-logo {
+                  vertical-align: middle;
+                  text-align: left;
+                  position: relative;
+                  /* padding: 10px; */
+                  /* padding-top: 10px; */
+                  /* width: 100%; */
+                  margin-right: 10px;
+                  margin-left: 10px;
+                  /* width: 50px; */
+                  /* height: 16px; */
+                  /* padding-left: 10px; */
+                  /* padding-right: 10px; */
+                  display: block;
+                  top: 50%;
+                  transform: translate(0px, -50%);
+                }
+                #display-messages {
+                  top: 50%;
+                  position: absolute;
+                  transform: translate(0px, -50%);
+                }
+              </style>
+              <div class='swipe-card-placeholder'>
+                <div class="swipe-card-layout" id='swipe-card-container'>
+
+                  <div class="swipe-card-bg-counter">
+                    <div class="swipe-card-bg" id='swipe-card-bg'>
+                    </div>
+                    <div class="swipe-card-bg-content">
+                      <div class="swipe-card-inner" id='message-container'>
+
+                        <div id='display-messages'>
+                          <div class="anim-message-row">
+                            <div class="container">
+                              <div class="row">
+                                <div class="col-md-10">
+                                  <div class="anim-message-container">
+                                    <div class="anim-message-content">
+                                      <div class="anim-message-layer">
+                                        <div class="anim-message-inner">
+                                          <div class='anim-message-inner-twitter-logo'>
+                                            <i class="fab fa-twitter anim-message-twitter-logo"></i>
+                                          </div>
+                                          <p class='tweet-text' id='tweet-preview-text'></p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="col-md-2">
+                                  <!-- Other side of the panel -->
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="anim-message-row">
+                            <div class="container">
+                              <div class="row">
+                                <div class="col-md-2">
+                                  <!-- Other side of the panel -->
+                                </div>
+                                <div class="col-md-10">
+                                  <div class="anim-message-container">
+                                    <div class="anim-message-content anim-message-content-right">
+                                      <div class="anim-message-layer">
+                                        <div class="anim-message-inner anim-message-inner-right">
+                                          <span class='tweet-text' id='tweet-response-text'></span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <style media="screen">
+                    .anim-message-row {
+                      position: relative;
+                      width: 100%;
+                      /*
+                      min-height: 100px;
+                      background-color: red;*/
+                    }
+                    .anim-message-container {
+                      width: 100%;
+                      height: 100%;
+                      padding: 10px;
+                    }
+                  </style>
+
+                  <div class="swipe-card noselect" id='swipe-card'>
+                    <div class="swipe-card-header">
+                      <div class="swipe-card-center" id='swipe-card-top-html'></div>
+                    </div>
+                    <div class="swipe-card-body">
+                      <div class="swipe-card-center" id='swipe-card-body-html'></div>
+                    </div>
+                    <div class="swipe-card-description" id='swipe-card-desc-html'></div>
+                    <div class="swipe-card-footer" id='swipe-card-footer-html'></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style='position:relative; width:200px'>
+              <div style=';width: 100%; height:100%;' id='opt-like-container'>
+                <div class="control-option option-like" style="margin-right: auto;" id='opt-like'>
+                  <i class="fas fa-plus"></i>
+                </div>
+              </div>
+
+            </div>
+        </div>
+
+
+    </div>
+    <style media="screen">
+      .option-dislike {
+        background-image: linear-gradient(to bottom right, #ff6c6c, #f68f80);
+        position: absolute;
+        top: 50%;
+        transform: translate(0px, -50%);
+        margin-right: 10px;
+        border-color: white !important;
+        right: 10px;
+        cursor: crosshair;
+      }
+      .option-unsure {
+        background-image: linear-gradient(to bottom right, #ffcc6c, #f68080);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-color: white !important;
+        cursor: crosshair;
+      }
+      .option-like {
+        background-image: linear-gradient(to bottom right, #6cffde, #80c163);
+        position: absolute;
+        top: 50%;
+        transform: translate(0px, -50%);
+        margin-left: 10px;
+        border-color: white !important;
+        left: 10px;
+        cursor: crosshair;
+      }
+      .swipe-card-origin {
+        transform: none !important;
+        transition-duration: 100ms;
+      }
+    </style>
+  </body>
+</html>
+<style media="screen">
+.app-controls {
+  padding-top: 20px;
+}
+  .control-option {
+    padding: 13px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    color: white;
+    position: absolute !important;
+    z-index: 99 !important;
+  }
+  .app-controls {
+    position: absolute;
+    width: 100%;
+    height: 100px;
+    z-index: 9999;
+    bottom: 0px;
+    left: 0px;
+  }
+  .option-active {
+    border: 2px solid rgba(255, 255, 255, 0.4) !important;
+  }
+  .option-border {
+    border: 1px solid white !important;
+  }
+  .bg-swipe-card {
+    animation-timing-function: linear;
+  }
+</style>
+<script type="text/javascript">
+
+  function draggableCard( element, cardData ){
+
+    var card = this;
+
+    card.element = element;
+    card.data = cardData
+
+    card.dragging = false;
+
+    card.mdX = 0;
+    card.mdY = 0;
+
+    card.lastXOffset = 0
+    card.lastYOffset = 0
+    card.lastRotate = 0
+
+    card.likeSelected = false;
+    card.dislikeSelected = false;
+
+    card.settings = {
+      enable_blur: false
+    }
+
+
+    card.setupCard = function(){
+      $(card.element).find('#swipe-card-top-html').html( card.data['swipe-card-top-html'] )
+      $(card.element).find('#swipe-card-body-html').html( card.data['swipe-card-body-html'] )
+      $(card.element).find('#swipe-card-desc-html').html( card.data['swipe-card-desc-html'] )
+      $(card.element).find('#swipe-card-footer-html').html( card.data['swipe-card-footer-html'] )
+
+      $('#tweet-preview-text').text( card.data['tweet-html'] )
+      $('#tweet-response-text').text( card.data['reply-html-negative'] )
+      /* TODO: check whether the card has a settings property */
+    }
+
+    var redColor = '#f77e76'
+    var invisColor = '#f77e7600'
+    var greenColor = '#79db98'
+
+    var lightRedColor = 'rgb(205, 92, 92)'
+    var deepGreenColor = 'rgb(44, 154, 79)'
+
+    card.jgradient = new JGradient( [ redColor, redColor, invisColor, greenColor, greenColor ] );
+    card.jgradient2 = new JGradient( [ lightRedColor, invisColor, deepGreenColor ] );
+
+    card.setTransform = function(xOffset, yOffset, rotate){
+
+      card.lastXOffset = xOffset
+      card.lastYOffset = yOffset
+      card.lastRotate = rotate
+
+      $( card.bg_element ).css('transform', 'rotate(' + ( rotate / 8 ) + 'deg)')
+      $( card.element ).css('transform', 'translate(' + xOffset + 'px, ' + yOffset + 'px) rotate(' + rotate + 'deg)')
+
+    }
+
+    card.onMouseMove = function(e){
+      if(card.dragging){
+
+        var deltaX = e.pageX - card.mdX
+        var deltaY = e.pageY - card.mdY
+
+        var screenUnit = screen.width / 8
+
+        var xMulti = deltaX * 0.03;
+        var yMulti = ( deltaY - screenUnit ) / 80;
+        var rotate = xMulti * yMulti;
+
+        var xTrans = xMulti * 50
+        var yTrans = yMulti * 80
+
+        if( rotate > 45 ){ rotate = 45 }
+        if( rotate < -45 ){ rotate = -45 }
+
+        var sat = ( ( deltaX / 450 ) + 1 ) / 2
+        sat = sat < 0 ? 0 : (sat > 1 ? 1 : sat)
+
+        var rgb = card.jgradient.get(sat)
+
+        var op;
+
+        if(sat >= 0.5){
+          op = sat - 0.5
+        } else {
+          op = 0.5 - sat
+        }
+
+        var cols_max_opacity = 0.3
+
+        op_sin = op * 10
+        op_sin = cols_max_opacity * op_sin
+
+        card.setStripeColor(rgb[0], rgb[1], rgb[2], op_sin)
+
+        card.updateBoxOpacity()
+
+        card.currSelected = (rgb[0] > rgb[1]) ? 'opt1' : 'opt2'
+
+        //rgb = card.jgradient2.get(sat)
+
+        card.setBoxColor(rgb[0], rgb[1], rgb[2], op_sin)
+
+        var box_op = op_sin * 2.5
+        box_op = box_op > 255 ? 255 : box_op
+        card.updateBoxOpacity( box_op )
+
+        card.setTransform(xTrans, yTrans, rotate)
+
+
+        if(card.currSelected == 'opt1'){
+          $('#tweet-response-text').html( card.data['reply-html-negative'] )
+        }
+        if(card.currSelected == 'opt2'){
+          $('#tweet-response-text').html( card.data['reply-html-positive'] )
+        }
+      } else {
+
+        var rgb = card.jgradient.get(0.5)
+
+        card.setBoxColor(rgb[0], rgb[1], rgb[2], 0)
+        card.setStripeColor(rgb[0], rgb[1], rgb[2], 0)
+        card.updateBoxOpacity(0)
+
+        $('#opt-like').removeClass('option-border')
+        $('#opt-dislike').removeClass('option-border')
+      }
+    }
+
+    $(document).mousemove(function(e){
+      card.onMouseMove(e)
+    });
+
+    // animate top bar
+
+    $(document).on('mousemove', function(e, i){
+      var mm_e = e.originalEvent
+      var mouse_x = mm_e.clientX
+      var mouse_y = mm_e.clientY
+      var doc_width = $(document).width()
+      var doc_height = $(document).height()
+      var top_dec = mouse_y / doc_height
+      if(top_dec < 0.15){
+        if(!card.dragging){
+          console.log('show')
+        } else {
+          console.log('hide')
+        }
+      } else {
+        console.log('hide')
+      }
+    })
+
+    $( card.element ).on("mousedown", function(e) {
+      card.dragging = true;
+      card.mdX = e.pageX
+      card.mdY = e.pageY
+      $( card.element ).removeClass('swipe-card-origin')
+      $( card.element ).css('pointer-events', 'none')
+      $( card.bg_element ).fadeIn('fast') //.css('opacity', 1)
+      card.onMouseMove(e)
+    })
+
+    $( document ).on("mouseup", function(e){
+      if(!(card.likeSelected || card.dislikeSelected)){
+          card.dragging = false;
+          $( card.element ).addClass('swipe-card-origin')
+          card.onDislikeLeave()
+          card.onLikeLeave()
+          $( card.element ).css('pointer-events', 'all')
+          $( '#opt-like-container' ).removeClass('option-active')
+          $( '#opt-dislike-container' ).removeClass('option-active')
+          $( card.bg_element ).fadeOut('fast')
+        }
+        card.onMouseMove(e)
+    });
+
+    card.onDislikeEnter = function(){
+      if( card.dragging ){
+
+        card.dislikeSelected = true;
+
+        $( '#opt-dislike-container' ).addClass( 'option-active' )
+        $( '#card-timer' ).fadeIn( 'fast' )
+        $( '#card-timer' ).addClass('timer-dislike' )
+        $( '#card-timer' ).removeClass( 'timer-like' )
+
+        $( card.bg_element ).addClass( 'swipe-slide-rotated-left' )
+      }
+    }
+
+    card.onDislikeLeave = function(){
+
+      /* take card back to origin */
+      if( card.settings.enable_blur ){
+        card.dragging = false
+        $( card.element ).addClass( 'swipe-card-origin' )
+        $( card.element ).css( 'pointer-events', 'all' )
+      }
+      /* end take card back to origin */
+      $( '#opt-dislike-container' ).removeClass( 'option-active' )
+      card.dislikeSelected = false;
+      card.currentTimer = 0;
+      $( '#card-timer' ).fadeOut( 'fast' )
+    }
+
+    card.onLikeEnter = function(){
+
+      if( card.dragging ){
+        card.likeSelected = true;
+        $( '#opt-like-container' ).addClass( 'option-active' )
+        $( '#card-timer' ).fadeIn( 'fast' )
+        $( '#card-timer' ).addClass( 'timer-like' )
+        $( '#card-timer' ).removeClass( 'timer-dislike' )
+      }
+
+    }
+
+    card.onLikeLeave = function(){
+
+      /* take card back to origin */
+      if( card.settings.enable_blur ){
+        card.dragging = false
+        $( card.element ).addClass( 'swipe-card-origin' )
+        $( card.element ).css( 'pointer-events', 'all' )
+      }
+      /* end take card back to origin */
+      $( '#opt-like-container' ).removeClass( 'option-active' )
+      card.likeSelected = false;
+      $( '#card-timer' ).fadeOut( 'fast' )
+    }
+
+    card.setStripeColor = function( r, g, b, a ){
+      $( '#swipe-card-bg' ).css( 'background', 'repeating-linear-gradient( 45deg, transparent, transparent 20px, rgb(' + r + ', ' + g + ', ' + b + ', ' + a + ') 20px, rgb(' + r + ', ' + g + ', ' + b + ', ' + a + ') 40px )')
+    }
+
+    card.setBoxColor = function( r, g, b, a ){
+      $( '#display-messages' ).find( '.anim-message-inner-right' ).css( 'background', 'rgba(' + r + ', ' + ( g ) + ', ' + b + ', ' + ( a * 0.5 + 0.5 ) + ')' )
+    }
+
+    card.updateBoxOpacity = function( value ){
+      $( '#message-container' ).css( 'opacity', value )
+    }
+
+    $( '#opt-dislike' ).on( 'mouseenter', function(){ card.onDislikeEnter() })
+    $( '#opt-dislike-container' ).on( 'mouseenter', function(){ card.onDislikeEnter() })
+    $( '#opt-dislike-container' ).on( 'mouseleave', function(){ card.onDislikeLeave()})
+
+    $( '#opt-like' ).on( 'mouseenter', function(){ card.onLikeEnter() })
+    $( '#opt-like-container' ).on( 'mouseenter', function(){ card.onLikeEnter() })
+    $( '#opt-like-container' ).on( 'mouseleave', function(){ card.onLikeLeave()})
+
+    card.setupCard()
+  }
+
+
+  var cardData = {
+    'swipe-card-top-html': "<div class='swipe-card-header-title'>Facebook inc</div> <div class='swipe-card-header-desc'>Social Networking</div>",
+    'swipe-card-body-html': "<div class='swipe-card-metic'>201<span class='swipe-card-metric-description'>Employees</span></div> <div class='swipe-card-metic'>2010<span class='swipe-card-metric-description'> Founded</span></div>",
+    'swipe-card-desc-html': "<p class='legend'>TWEET</p> <i class='fas fa-quote-left' style='margin: 10px;color: white;'></i> <span class='twitter-quote'>$250 is your home $FB , go to your home. my OTM calls need you to deliver</span>",
+    'swipe-card-footer-html' : "<p class='legend'>QUESTION</p> <i class='far fa-star' style='margin: 10px;color: white;'></i> <span class='twitter-quote'>Is this tweet positive or negative?</span>",
+    'tweet-html' : "$250 is your home $FB , go to your home. my OTM calls need you to deliver",
+    'reply-html-positive': '<span style="min-width: 150px;text-align:left;margin-right:10px">This tweet is positive!</span>😁',
+    'reply-html-negative': '<span style="min-width: 150px;text-align:left;margin-right:10px">This tweet is negative!</span>😢'
+  }
+
+  window.card = new draggableCard($('#swipe-card'), cardData)
+
+
+</script>
+<style media="screen">
+  /* Debug background */
+
+/*
+  .swipe-card {
+    display: none;
+  }
+
+  #message-container {
+    opacity: 1 !important;
+  }
+</style>
