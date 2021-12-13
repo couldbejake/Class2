@@ -1,5 +1,5 @@
 # Class2
-A web-based tinder style classifier for the purposes of natural language processing (NLP).
+A fast-loading web-based tinder style classifier for the purposes of natural language processing (NLP).
 
 ![Preview](https://i.imgur.com/c4keDIp.png)
 
